@@ -14,9 +14,9 @@ def get_packages():
     
     return pkg_arr
 
-def get_pkg_version(output_line: str):
-    output = output_line.split(" ")
-    pkg_version = output[1]
+def get_pkg_version(pkg_line: str):
+    tmp = pkg_line.split(" ")
+    pkg_version = tmp[1]
     return pkg_version
 
 
