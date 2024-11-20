@@ -14,12 +14,17 @@ def get_packages():
     
     return pkg_arr
 
-def get_pkg_version(output_line):
-    output = string.split(output_line, " ")
-    return output
+def get_pkg_version(output_line: str):
+    output = output_line.split(" ")
+    pkg_version = output[1]
+    return pkg_version
 
+
+def get_pkg_name():
+    return
 
 pkg_list = get_packages()
 
-for pkg in pkg_list:
+for pkg in pkg_list[1:]:
+    split_pkg = get_pkg_version(pkg)
     print(pkg)
