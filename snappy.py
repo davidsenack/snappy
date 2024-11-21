@@ -48,9 +48,24 @@ def install_pkg(pkg_name, pkg_version):
     subprocess.run(cmd, shell=True)
     return
 
-def compare_pkgs(current_packages, snapshot_packages):
-        
+def delete_pkg(pkg_name):
+    cmd = "sudo apt remove {}".format(pkg_name)
+    subprocess.run(cmd, shell=True)
     return
+
+def compare_pkgs(current_pkg_arr, snapshot_pkg_arr):
+    pkgs_to_remove = []
+    pkgs_to_add = []
+    
+    for pkg in current_pkg_arr:
+        if pkg not in snapshot_pkg_arr:
+            pkgs_to_remove.append(pkg)
+
+    for pkg in snapshot_pkg_arr:
+        if pkg not in current_pkg_arr:
+            pkgs_to_add.append(pkg)
+
+    return (pkgs_to_add, pkgs_to_remove)
 
 
 def create_snapshot():
