@@ -4,7 +4,7 @@ import subprocess
 import datetime
 import os 
 
-def get_packages():
+def get_current_packages():
     get_packages_cmd = "apt list --installed"
     tmp = subprocess.run(get_packages_cmd, shell=True, capture_output=True, text=True)
     pkg_list = tmp.stdout.strip()
