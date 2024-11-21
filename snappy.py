@@ -10,11 +10,14 @@ def get_packages():
     pkg_list = tmp.stdout.strip()
     new_pkg_list = pkg_list.split('\n')
 
-    pkg_arr = []
-    for pkg in new_pkg_list:
-        pkg_arr.append(pkg)
-    
-    return pkg_arr
+    pkg_list = []
+
+    for pkg in new_pkg_list[1:]:
+        pkg_name = get_pkg_name(pkg)
+        pkg_version = get_pkg_version(pkg)
+        pkg_list.append("{} {}".format(pkg_name, pkg_version))
+
+    return pkg_list
 
 def get_pkg_name(pkg_line: str) -> str:
     tmp = pkg_line.split("/")
@@ -32,6 +35,11 @@ def install_pkg(pkg_name, pkg_version):
     cmd = "sudo apt install {}={}".format(pkg_name, pkg_version)
     subprocess.run(cmd, shell=True)
     return
+
+def compare_pkgs(current_packages, snapshot_packages):
+        
+    return
+
 
 def create_snapshot():
     # Check for .snappy directory
@@ -76,7 +84,7 @@ def restore_from_snapshot(snapshot_name):
 
 #create_snapshot()
 snapshot_filename = "2024-11-20_23-18-1732162722.pkg.snapshot"
-restore_from_snapshot(snapshot_filename)
+print(get_packages())
 
 
 # We need to write a comparison function for the restore function to use. 
