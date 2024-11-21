@@ -26,10 +26,22 @@ def get_pkg_version(pkg_line: str) -> str:
     pkg_version = tmp[1]
     return pkg_version
 
+def install_pkg(pkg_name, pkg_version):
+    cmd = "sudo apt install {}={}".format(pkg_name, pkg_version)
+    subprocess.run(cmd, shell=True)
+    return
+
+def create_snapshot():
+    return
+
+def restore_from_snapshot():
+    return
+
 pkg_list = get_packages()
 
 for pkg in pkg_list[1:5]:
     pkg_name = get_pkg_name(pkg)
     pkg_version = get_pkg_version(pkg)
-    print(pkg_name)
-    print(pkg_version)
+    #print(pkg_name)
+    #print(pkg_version)
+    install_pkg(pkg_name, pkg_version)
