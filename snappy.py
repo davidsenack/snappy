@@ -83,4 +83,10 @@ restore_from_snapshot(snapshot_filename)
 # It should compare the current installed packages and versions to the snapshot
 # we're restoring from and create a list of packages that either aren't installed
 #  or are install with the wrong version. This should significantly imporve the speed
-#  of the restore process. 
+#  of the restore process.
+#
+#
+#  We should also include output after resotre that shows the changes made to
+#  the system like so: 
+#
+#   nvim 8.1.3 -> nvim 8.0.4
