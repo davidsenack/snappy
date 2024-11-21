@@ -56,10 +56,31 @@ def create_snapshot():
             file.write("{} {}\n".format(pkg_name, pkg_version))
 
     print(f"Current package snapshot has been written to '{file_path}'")
-
     return
 
-def restore_from_snapshot():
+def restore_from_snapshot(snapshot_name):
+    #::TODO fix the multiple .snappy dir refs to different functions
+    directory = os.path.expanduser("~/.snappy")
+    file_path = os.path.join(directory, snapshot_name)
+
+    with open(file_path, "r") as file:
+        for line in file:
+            line = line.strip()
+            pkg_name = line.split(" ")[0]
+            pkg_version = line.split(" ")[1]
+            cmd = "sudo apt install {}={}".format(pkg_name, pkg_version)
+            subprocess.run(cmd, shell=True)
+    
+    print("Packages from snapshot installed.")
     return
 
-create_snapshot()
+#create_snapshot()
+snapshot_filename = "2024-11-20_23-18-1732162722.pkg.snapshot"
+restore_from_snapshot(snapshot_filename)
+
+
+# We need to write a comparison function for the restore function to use. 
+# It should compare the current installed packages and versions to the snapshot
+# we're restoring from and create a list of packages that either aren't installed
+#  or are install with the wrong version. This should significantly imporve the speed
+#  of the restore process. 
