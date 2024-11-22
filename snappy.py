@@ -81,11 +81,11 @@ def create_snapshot():
     file_path = os.path.join(directory, file_name)
 
     # Get current package data
-    pkg_list = get_packages()
+    pkg_list = get_current_pkgs()
 
     # Write current pacakge data to output file
     with open(file_path, "w") as file:
-        for pkg in pkg_list[1:]:
+        for pkg in pkg_list:
             pkg_name = get_pkg_name(pkg)
             pkg_version = get_pkg_version(pkg)
             file.write("{} {}\n".format(pkg_name, pkg_version))
@@ -93,26 +93,43 @@ def create_snapshot():
     print(f"Current package snapshot has been written to '{file_path}'")
     return
 
-def restore_from_snapshot(snapshot_name):
+def restore_from_snapshot(snapshot_file_path):
     #::TODO fix the multiple .snappy dir refs to different functions
-    directory = os.path.expanduser("~/.snappy")
-    file_path = os.path.join(directory, snapshot_name)
-
-    with open(file_path, "r") as file:
-        for line in file:
-            line = line.strip()
-            pkg_name = line.split(" ")[0]
-            pkg_version = line.split(" ")[1]
-            cmd = "sudo apt install {}={}".format(pkg_name, pkg_version)
-            subprocess.run(cmd, shell=True)
+    current_pkgs = get_current_pkgs()
+    snapshot_pkgs = get_snapshot_pkgs(snapshot_file_path)
+    pkgs_to_install, pkgs_to_remove = compare_pkgs(current_pkgs, snapshot_pkgs)
     
-    print("Packages from snapshot installed.")
+    for pkg in pkgs_to_remove:
+        pkg_name = pkg.split(" ")[0]
+    #   pkg_version = line.split(" ")[1]
+        rcmd = "sudo apt remove -y {}".format(pkg_name)
+        subprocess.run(rcmd, shell=True)
+        print("Remove: " + pkg)
+
+    for pkg in pkgs_to_install:
+       pkg_name = pkg.split(" ")[0]
+       pkg_version = pkg.split(" ")[1]
+       icmd = "sudo apt install -y --allow-downgrades {}={}".format(pkg_name, pkg_version)
+       subprocess.run(icmd, shell=True)
+       print("Install: " + pkg)
+    
+    
+    for pkg in pkgs_to_remove:
+        print("Package " + pkg + " Removed")
+
+    print("Restore Packages from Snapshot Complete!")
     return
 
-#create_snapshot()
-snapshot_filename = "2024-11-20_23-18-1732162722.pkg.snapshot"
-snapshot_path = "/home/david/.snappy/"
-print(get_snapshot_pkgs(snapshot_path + snapshot_filename))
+def main():
+
+    #create_snapshot()
+    snapshot_filename = "2024-11-22_12-24-1732296292.pkg.snapshot"
+    snapshot_path = "/home/david/.snappy/"    
+
+    restore_from_snapshot(snapshot_path + snapshot_filename)
+
+if __name__=="__main__":
+    main()
 
 # We need to write a comparison function for the restore function to use. 
 # It should compare the current installed packages and versions to the snapshot
@@ -125,3 +142,14 @@ print(get_snapshot_pkgs(snapshot_path + snapshot_filename))
 #  the system like so: 
 #
 #   nvim 8.1.3 -> nvim 8.0.4
+#
+#
+'''
+for pkg in snapshot:
+    if pkg not in current_pkgs:
+        install package
+
+for pkg in current_pkgs:
+    if pkg not in snapshot:
+        remove pkg 
+'''
